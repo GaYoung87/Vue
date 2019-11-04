@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- Axios -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <!-- vue 사용할 준비 완료 -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <button v-on:click="getDogImage">멍멍</button>
+    <img :src="dogImage" alt="멍멍">
+
+    <button v-on:click="getCatImage">야옹</button>
+    <img v-bind:src="catImage" alt="야옹">
+    <!-- <img :src="catImage" alt="야옹"> 이것과 동일 -->
+  </div>
+
+  <script>
+    // 1. Vue instance에 함수를 ""정의할 때""는 function 키워드를 사용
+    //    -> 그렇게 해야 정의된 함수의 this가 vue instance를 가리킨다.
+
+    // 2. Vue instance에 정의된 함수 내에서 ""callback 함수를 사용할 때"" arrow function을 사용한다.
+    //    -> 그렇게 해야 callback 함수의 this가 vue instance를 가리킨다.
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        dogImage: '',
+        catImage: '',
+      },
+      methods: {
+        getDogImage: function() {
+          const API_URL = 'https://dog.ceo/api/breeds/image/random'
+          // API URL로 요청을 보내 응답받은 강아지 사진 url을 Vue Instance의 dogImage를 data값에 할당한다
+
+          // this <= vue instance
+          axios.get(API_URL)
+            // function이 아닌 arrow function으로 적어줘야함 
+            .then((response) => {
+              // 응답받은 이미지 url을 vue instance의 dogImage값에 할당!
+              this.dogImage = response.data.message
+            })
+        },
+        getCatImage: function() {
+          // API URL로 요청을 보내 응답받은 고양이 사진 url을 Vue Instance의 catImage를 data값에 할당한다
+          const API_URL = 'https://api.thecatapi.com/v1/images/search'
+
+          axios.get(API_URL)
+            .then((response) => {
+              this.catImage = response.data["0"].url
+            })
+        }
+      },
+
+      // 처음에 load가 되면 한번씩 실행 시키고 시작하기! (처음부터 사진 보여주고 시작!)
+      // 최초 vue instacne가 생성된 후 실행하는 함수
+      created: function() {
+        this.getDogImage()
+        this.getCatImage()
+      }
+    })
+  </script>
+  
+</body>
+</html>
