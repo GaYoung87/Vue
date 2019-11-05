@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- 도움되는 콘솔 경고를 포함한 개발 버전 -->
   <!-- vue 사용할 준비 완료 -->
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <title>Todo App</title>
+  <title>Document</title>
   <style>
     .completed {
       text-decoration: line-through;
@@ -16,91 +17,125 @@
 </head>
 <body>
   <div id="app">
-    <h1 v-bind:style="{ color: activeColor, fontSize + 'px' }">Todo APP</h1>
+    <h1 v-bind:style="{ color: activeColor, fontSize: fontSize + 'px'}">Todo App</h1>
+    <input id="input" v-model="newTodo" type="text" v-on:keydown.enter='addTodo'>
+    <button @click="addTodo">추가하기</button>
+​
+    <select v-model="showMode">
+      <option value="completed">completed</option>
+      <option value="notCompleted">notCompleted</option>
+      <option value="all">all</option>
+    </select>
     <ul>
-      <!-- <li v-for="todo in todos" v-if='!todo.completed' v-on:click='toggleTodo(todo)'>
+      <!-- <li v-for="todo in todos" v-if="!todo.completed" v-on:click="toggoleTodo(todo)"> -->
+        <!-- showMode에 따라서 보여지도록 하겠다 -->
+        <!-- app.showMode = 'completed'  로 바꿔보기 -->
+      <li v-for="todo in todoByShowMode" v-bind:class="{ completed: todo.completed }" v-bind:key="todo.id">
+        <input type="checkbox" v-model='todo.completed'>
         {{ todo.content }}
       </li>
-      <li v-else @click='toggleTodo(todo)'>[완료!]</li> -->
-
-      <!-- 체크박스 만들기 위 li 와 동일 -->
-      <li v-for="todo in todos" v-bind:class="{ completed: todo.completed }">
-        <input type="checkbox" v-model="todo.completed">
-        {{ todo.content }}
-      </li>
+      <!-- <li v-else @click="toggoleTodo(todo)">{{ todo.content }}[완료!]</li> -->
     </ul>
-    <!-- v-model넣어주면 실시간으로 연동 -->
-    <input v-model="newTodo" type="text" v-on:keydown.enter="addTodo">
-    
+​
     <footer>
-      <button v-on:click="clearCompleted">Clear Completed</button>
+      <button @click="clearCopmpleted">Clear completed todos</button>
+​
     </footer>
-
+​
+    <!-- 우리가 abc로 작성하면 cba로 나타나게 하겠다 -->
+    <!-- 밑에서 값을 가지고옴! 이는 함수가 아니라 변수라고 생각해야함 reversedNewTodo()가 아님 -->
+    <p> {{ now1 }} </p> 
+    <p> {{ now2() }} </p>
   </div>
-
+​
   <script>
     const app = new Vue({
       el: '#app',
       data: {
         todos: [
           {
+            id: 1,
             content: '저녁 메뉴 고민하기',
             completed: true,
           },
           {
+            id: 2,
             content: '사다리 타기',
             completed: false,
           },
           {
-            content: '약속의 2시 낮잠자기',
+            id: 3,
+            content: '약속의 2시 낮잠 자기',
             completed: false,
           },
           {
+            id: 4,
             content: '야자하기',
             completed: false,
-          },         
+          },
         ],
         newTodo: '',
-        // 수정할 때 편함 -> activeColor, fontSize 변수로 작성하면 변수 값만 수정하면 편함 
-        activeColor: 'orange',
-        fontSize: 30,
+        // CSS
+        activeColor: 'red',
+        fontSize: 50,
+        // Show mode
+        showMode: 'all',
       },
+      // vue에서 사용할 함수들을 저장하는 공간
       methods: {
-        toggleTodo: function(todo){
+        toggoleTodo: function(todo) {
           todo.completed = !todo.completed
         },
         addTodo: function() {
-          this.todos.push({
-            content: this.newTodo,
-            completed: false
-          })
+          if(this.newTodo){
+            this.todos.push({
+              id: new Date().getTime(),
+              content: this.newTodo,
+              completed: false,
+            })
+        }
           this.newTodo = ''
         },
-        // filter 이용
-        clearCompleted: function() {
+        clearCopmpleted: function() {
           // Completed가 true인 모든 todo를 리스트에서 삭제한다.
           // => Completed가 false인 todo만 남는다
 
           // this -> Vue함수의 특정한 데이터에 접근을 하겠다
-          this.todos = this.todos.filter(todo => {
-            return !todo.completed
-        })
-
-        // // for문 사용
-        // clearCompleted: function() {
-        //   const newTodos = []
-
-        //   for (const todo of this.todos) {
-        //     if (!todo.completed) newTodos.push(todo)
-        //   }
-        //   this.todos = newTodos
+          this.todos = this.todos.reduce( (result, todo) => {
+            if (!todo.completed) {
+              result.push(todo)
+            }
+            return result
+          }, [])
+        },
+​
+        now2: function() {
+          return new Date().getTime()
         }
       },
+      computed: {
+        // 여기서 미리 계산한 값을 위에 붙인다. -> 이는 함수가 아님!
+        // 연산이 들어가야해서 연산되고 난 다음에 결과값을 reversedNewTodo라는 변수에 넣겠다.
+        reversedNewTodo: function() {
+          return this.newTodo.split('').reverse().join()
+        },  // 함수가 아니다..... 안에 연산이 들어가야하기때문에 안에 연산되고 난 결과값을 키값에 바인딩을 시키겠다
+        
+        now1: function() {
+          return new Date().getTime()
+        }, // 이값이 바뀌지 않는한 불필요한 계산을 하지않고 저장된값을 계속 유지
+        
+        todoByShowMode: function() {
+          // showMode에 따라 todolist 를 새롭게 반환한다.
+          if (this.showMode === 'notCompleted') {
+            return this.todos.filter(todo => !todo.completed)
+          } else if (this.showMode === 'completed') {
+            return this.todos.filter(todo => todo.completed)
+          } else {
+            return this.todos
+          }
+        },
+      },
     })
-    // todo.pop() 하면 하나씩 없어짐
-  
-  
   </script>
-  
 </body>
 </html>
