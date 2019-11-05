@@ -153,7 +153,7 @@
         },
       },
       created () { //View instance가 생성되면 실행하는 함수
-        this.todos =todoStorage.fetch()
+        this.todos = todoStorage.fetch()
       },
       watch: { // 특정 데이터가 바뀔때마다 실행하는 함수를 정의하는 곳
         // todos: function() { // todos 라는 데이터가 바뀔때마다 실행하는 함수 하지만 todos 는 어레이 형식이라 내부의 변화를 모름

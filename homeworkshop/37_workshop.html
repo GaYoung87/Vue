@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- Vue 도움되는 콘솔 경고를 포함한 개발 버전 -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <title>Go</title>
+</head>
+<body>
+  <div id="app">
+    <input type="text" v-model="url">
+    <a v-bind:href="url">Go!</a>
+  </div>
+
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        url: ''
+      },
+    })
+  </script>
+</body>
+</html>

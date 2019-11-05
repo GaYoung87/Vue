@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Vue 도움되는 콘솔 경고를 포함한 개발 버전 -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Toggle</title>
+</head>
+<body>
+  <div id="app">
+    <button v-on:click="toggle">Toggle</button>
+    <p v-bind:style="{ color: activeColor }">빨강과 파랑을 섞으면 보라색이 됩니다.</p>
+  </div>
+
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        activeColor: 'red',
+      },
+      methods: {
+        toggle: function() {
+          if (this.activeColor === 'red') {
+            this.activeColor = 'blue'
+          } else {
+            this.activeColor = 'red'
+          }
+        }
+      }
+    })
+  </script>
+  
+</body>
+</html>
