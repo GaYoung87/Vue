@@ -38,7 +38,7 @@
     </ul>
 ​
     <footer>
-      <button @click="clearCopmpleted">Clear completed todos</button>
+      <button @click="clearCompleted">Clear completed todos</button>
 ​
     </footer>
 ​
@@ -48,7 +48,23 @@
     <p> {{ now2() }} </p>
   </div>
 ​
+<!-- STORAGE -->
+<!-- 1. session storage :  세션이 유지되는 공간에서만 내용이 저장 -->
+<!-- 2. local storage : key, value형태로 데이터 저장하는 형태이지만, 브라우저를 껐다 켜도 정보가 저장되어있음 -->
+
   <script>
+    const STORAGE_KEY = 'vue-todos'
+    const todoStorage = {
+      fetch: function() {
+        // String => Array
+        return JSON.parse(localStorage.getItem(STORAGE_KEY))
+      },
+      save: function(todos) {
+        // Array => String
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
+      }
+    }
+​
     const app = new Vue({
       el: '#app',
       data: {
@@ -81,11 +97,13 @@
         // Show mode
         showMode: 'all',
       },
+
       // vue에서 사용할 함수들을 저장하는 공간
       methods: {
-        toggoleTodo: function(todo) {
-          todo.completed = !todo.completed
-        },
+        // toggoleTodo: function(todo) {
+        //   todo.completed = !todo.completed
+        //   todoStorage.save(this.todos)
+        // }, 엌 이제 이거 안씀 ㅋ
         addTodo: function() {
           if(this.newTodo){
             this.todos.push({
@@ -95,8 +113,9 @@
             })
         }
           this.newTodo = ''
+          todoStorage.save(this.todos)
         },
-        clearCopmpleted: function() {
+        clearCompleted: function() {
           // Completed가 true인 모든 todo를 리스트에서 삭제한다.
           // => Completed가 false인 todo만 남는다
 
@@ -119,12 +138,10 @@
         reversedNewTodo: function() {
           return this.newTodo.split('').reverse().join()
         },  // 함수가 아니다..... 안에 연산이 들어가야하기때문에 안에 연산되고 난 결과값을 키값에 바인딩을 시키겠다
-        
         now1: function() {
           return new Date().getTime()
         }, // 이값이 바뀌지 않는한 불필요한 계산을 하지않고 저장된값을 계속 유지
-        
-        todoByShowMode: function() {
+                todoByShowMode: function() {
           // showMode에 따라 todolist 를 새롭게 반환한다.
           if (this.showMode === 'notCompleted') {
             return this.todos.filter(todo => !todo.completed)
@@ -134,6 +151,19 @@
             return this.todos
           }
         },
+      },
+      created () { //View instance가 생성되면 실행하는 함수
+        this.todos =todoStorage.fetch()
+      },
+      watch: { // 특정 데이터가 바뀔때마다 실행하는 함수를 정의하는 곳
+        // todos: function() { // todos 라는 데이터가 바뀔때마다 실행하는 함수 하지만 todos 는 어레이 형식이라 내부의 변화를 모름
+        //   todoStorage.save(this.todos)
+        todos: {
+          handler: function() {
+             todoStorage.save(this.todos)
+          },
+          deep: true, // object의 nested item 도 감시할지 유무
+        }
       },
     })
   </script>
