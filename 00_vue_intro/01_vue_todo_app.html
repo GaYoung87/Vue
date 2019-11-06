@@ -18,6 +18,7 @@
 <body>
   <div id="app">
     <h1 v-bind:style="{ color: activeColor, fontSize: fontSize + 'px'}">Todo App</h1>
+    <!-- v-model: 사용자의 입력을 받는 select, textarea, checkbox, input 이랑 data랑 양방향 바인딩 -->
     <input id="input" v-model="newTodo" type="text" v-on:keydown.enter='addTodo'>
     <button @click="addTodo">추가하기</button>
 ​
