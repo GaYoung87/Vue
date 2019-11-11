@@ -8,6 +8,7 @@
 </template>
 
 <script>
+// script 가장 위쪽에서 불러와야함
 import TodoList from './components/TodoList.vue' 
 
 export default {
