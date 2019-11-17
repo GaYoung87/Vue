@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- vue 사용할 준비 완료 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <title>Dogs and Cats</title>
+</head>
+<body>
+  <div id="app">
+    <button v-on:click="getDogImage">멍멍</button>
+    <img v-bind:src="dogImage" alt="멍멍">
+
+    <button v-on:click="getCatImage">냐옹</button>
+    <img v-bind:src="catImage" alt="냐옹">
+  </div>
+
+  
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        dogImage: '',
+        catImage: '',
+      },
+      methods: {
+        getDogImage: function() {
+          const API_URL = 'https://dog.ceo/api/breeds/image/random'
+          const response = await axios.get(API_URL)
+          this.dogImage = response.data.message
+        },
+        getCatImage: function() {
+          const API_URL = 'https://api.thecatapi.com/v1/images/search'
+            axios.get(API_URL)
+              .then(response => {
+                this.catImage = response.data["0"].url
+              })
+        },
+      },
+      created: function() {
+        this.getDogImage()
+        this.getCatImage()
+      }
+    })
+  </script>
+</body>
+</html>
